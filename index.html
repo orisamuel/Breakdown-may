@@ -31,9 +31,20 @@ textarea,input,button{font-family:inherit}
     <div class="loader-text">טוען...</div>
   </div>
 </div>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script>
+window.onerror=function(msg,src,line,col,err){
+  var el=document.getElementById("root");
+  if(el)el.innerHTML='<pre style="color:#fca5a5;background:#1a0505;padding:16px;margin:16px;border-radius:8px;font-size:12px;white-space:pre-wrap;direction:ltr;text-align:left">SCRIPT ERROR:\n'+msg+'\nLine '+line+':'+col+(err&&err.stack?'\n\n'+err.stack:'')+'</pre>';
+  return true;
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script>
+if(typeof React==="undefined"||typeof ReactDOM==="undefined"){
+  document.getElementById("root").innerHTML='<div style="color:#fca5a5;padding:20px">React לא נטען. בדוק חיבור אינטרנט.</div>';
+  throw new Error("React not loaded");
+}
 var h = React.createElement;
 var useState = React.useState;
 var useEffect = React.useEffect;
@@ -183,7 +194,7 @@ h(“div”,{key:“body”,style:{padding:“16px 18px 0”}},body)
 
 function App(){
 var si=useState(function(){try{var v=localStorage.getItem(KI);return v?JSON.parse(v):ITEMS;}catch(e){return ITEMS;}}),items=si[0],setItems=si[1];
-var ss=useState(function(){try{var v=localStorage.getItem(KS);return v?JSON.parse(v);}catch(e){}return{};}),statuses=ss[0],setStatuses=ss[1];
+var ss=useState(function(){try{var v=localStorage.getItem(KS);if(v)return JSON.parse(v);}catch(e){}return{};}),statuses=ss[0],setStatuses=ss[1];
 var sd=useState(“ראשון”),day=sd[0],setDay=sd[1];
 var sel=useState(null),selItem=sel[0],setSelItem=sel[1];
 var sgd=useState(false),showGD=sgd[0],setShowGD=sgd[1];
