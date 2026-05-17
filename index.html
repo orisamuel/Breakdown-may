@@ -5,45 +5,371 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#060d1a" />
-<title>ברייקדאון מאי</title>
+<title>Breakdown May</title>
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; background: #060d1a; overscroll-behavior: none; min-height: 100vh; }
-  body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #e2e8f0; }
-  input[type=range] { accent-color: #fbbf24; width: 100%; }
-  button:active { transform: scale(0.97); }
-  textarea, input, button { font-family: inherit; }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-thumb { background: #1e2d45; border-radius: 3px; }
-  .loader { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
-  .loader-dot { width: 10px; height: 10px; background: #7c3aed; border-radius: 50%; animation: pulse 1.4s infinite ease-in-out both; }
-  .loader-dot:nth-child(1) { animation-delay: -0.32s; }
-  .loader-dot:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes pulse { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
-  .loader-text { color: #475569; font-size: 13px; letter-spacing: 2px; }
-  .loader-row { display: flex; gap: 8px; }
-  .err { background: #1a0505; border: 1px solid #991b1b; color: #fca5a5; padding: 16px; margin: 16px; border-radius: 10px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; font-family: monospace; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#060d1a;min-height:100vh;overscroll-behavior:none}
+body{font-family:'Helvetica Neue',Arial,sans-serif;color:#e2e8f0}
+input[type=range]{accent-color:#fbbf24;width:100%}
+button:active{transform:scale(0.97)}
+textarea,input,button{font-family:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#1e2d45;border-radius:3px}
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px}
+.dot{width:10px;height:10px;background:#7c3aed;border-radius:50%;animation:pulse 1.4s infinite ease-in-out both}
+.dot:nth-child(1){animation-delay:-.32s}
+.dot:nth-child(2){animation-delay:-.16s}
+@keyframes pulse{0%,80%,100%{transform:scale(0);opacity:.5}40%{transform:scale(1);opacity:1}}
+.lt{color:#475569;font-size:13px;letter-spacing:2px}
+.dr{display:flex;gap:8px}
+.err{background:#1a0505;border:1px solid #991b1b;color:#fca5a5;padding:16px;margin:16px;border-radius:10px;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word;font-family:monospace}
 </style>
 </head>
 <body>
 <div id="root">
   <div class="loader">
-    <div class="loader-row">
-      <div class="loader-dot"></div>
-      <div class="loader-dot"></div>
-      <div class="loader-dot"></div>
-    </div>
-    <div class="loader-text">טוען...</div>
+    <div class="dr"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="lt">Loading...</div>
   </div>
 </div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script>
-  window.addEventListener('error', function(e) {
-    var el = document.getElementById('root');
-    if (el) el.innerHTML = '<div class="err">שגיאה:\n\n' + (e.message || e) + '\n\n' + (e.filename || '') + ':' + (e.lineno || '') + '</div>';
+window.onerror = function(msg, src, line) {
+  document.getElementById("root").innerHTML = "<div class='err'>Error:\n\n" + msg + "\n\n" + src + ":" + line + "</div>";
+};
+
+(function() {
+var h = React.createElement;
+var useState = React.useState;
+var useEffect = React.useEffect;
+var createRoot = ReactDOM.createRoot;
+
+var ITEMS = [
+{id:1,day:“ראשון”,t:“8:30-9:00”,hotel:“וילג”,type:“1”,loc:“חדר”,script:“שוטים של השחקנים בחדר, ביוטי בלי השחקנים קצת. השחקנית בפריים והשחקן דרך המראה יושב וקורא”,cast:“שחקן ושחקנית”,lc:””,lp:””},
+{id:2,day:“ראשון”,t:“8:30-9:00”,hotel:“וילג”,type:“5”,loc:“חדר”,script:“עושים שנצ בחדר, שנצ במרפסת”,cast:“שחקן ושחקנית”,lc:””,lp:””},
+{id:3,day:“ראשון”,t:“9:00-10:30”,hotel:“מלכת שבא”,type:“4”,loc:“חדר אוכל”,script:“קלוז אפ מטורף על מנה, יוצאים מהחדר אוכל- קצת לובי, קבלה- יציאה ללוגו”,cast:”-”,lc:””,lp:””},
+{id:4,day:“ראשון”,t:“9:00-10:30”,hotel:“מלכת שבא”,type:“2,8”,loc:“חדר אוכל”,script:“השחקנית והאוכל- ביוט וולוג. חיתוך לחם טרי בקלוז אפ. בציעה של קרואסון, כמה מנות יפות”,cast:“שחקנית”,lc:””,lp:””},
+{id:5,day:“ראשון”,t:“9:00-10:30”,hotel:“מלכת שבא”,type:“3”,loc:“חדר אוכל”,script:“קפה וסלט בארוחת בוקר- עם השחקנית”,cast:“שחקנית”,lc:””,lp:””},
+{id:6,day:“ראשון”,t:“9:00-10:30”,hotel:“מלכת שבא”,type:“12”,loc:“חדר אוכל”,script:“שחקנית בחדר אוכל נפרדת מהבופה”,cast:“שחקנית”,lc:””,lp:””},
+{id:7,day:“ראשון”,t:“10:30-11:30”,hotel:“מלכת שבא”,type:“12”,loc:“לובי”,script:“שחקנית עומדת באזור דלפק הקבלה, מסתכלת בקנאה על אורחים שנכנסים מאושרים עם מזוודות.”,cast:“שחקנית”,lc:””,lp:””},
+{id:8,day:“ראשון”,t:“10:30-11:30”,hotel:“מלכת שבא”,type:“12”,loc:“יציאה מהמלון”,script:“שחקנית עומדת ביציאה מהמלון, מסתכלת בטלפון ונושמת לרווחה כשהיא סוגרת שוב.”,cast:“שחקנית”,lc:””,lp:””},
+{id:9,day:“ראשון”,t:“10:30-11:30”,hotel:“מלכת שבא”,type:“3”,loc:“לוגו מלון בחוץ”,script:“לצלם את השחקנית על הלוגו”,cast:“שחקנית”,lc:””,lp:””},
+{id:10,day:“ראשון”,t:“10:30-11:30”,hotel:“מלכת שבא”,type:“2”,loc:“לובי”,script:“הלובי המשופץ, ביוטי וולוג פלוס השחקנית ישנה על הספה”,cast:“שחקנית”,lc:””,lp:””},
+{id:11,day:“ראשון”,t:“10:30-11:30”,hotel:“מלכת שבא”,type:“2”,loc:“לובי”,script:“שחקנית יושבת על עגלת מזוודות ומישהו מסיע אותה החוצה מהפריים.”,cast:“שחקנית”,lc:””,lp:””},
+{id:12,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“12”,loc:“חדר יפה/סוויטה”,script:“שחקנית יושבת על המיטה בחדר, לבושה בחלוק. מדברת עם הקבלה: הצ’ק-אאוט ב11 בבוקר או ב11 בלילה?”,cast:“שחקנית”,lc:“חלוק מגבת וחדר יפה”,lp:””},
+{id:13,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“3”,loc:“חדר יפה/סוויטה”,script:“השחקנית בחדר, נופלת על המיטה. פותחת את הוילון.”,cast:“שחקנית”,lc:””,lp:””},
+{id:14,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“3”,loc:“חדר יפה/סוויטה”,script:“שחקן מפיל את עצמו אחורה על המיטה בסוויטה עם אנחת רווחה טובה של חופש.”,cast:“שחקן”,lc:””,lp:””},
+{id:15,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“12”,loc:“חדר יפה/סוויטה”,script:“שחקנית נאבקת לסגור מזוודה מפוצצת בחדר, מדברת לעבר ילדים מחוץ לפריים.”,cast:“שחקנית”,lc:””,lp:””},
+{id:16,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“8”,loc:“חדר יפה/סוויטה”,script:“ביוטי חדר”,cast:””,lc:””,lp:””},
+{id:17,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“2”,loc:“חדר יפה/סוויטה”,script:“קלוז-אפ יד מושכת וילון, אור שמש שוטף את החדר.”,cast:”-”,lc:””,lp:””},
+{id:18,day:“ראשון”,t:“12:00-13:30”,hotel:“מלכת שבא”,type:“8”,loc:“חדר יפה/סוויטה”,script:“קלוז-אפ יד מקרבת כרטיס למנעול, אור ירוק וקליק.”,cast:”-”,lc:””,lp:””},
+{id:19,day:“ראשון”,t:“14:15-15:00”,hotel:“מלכת שבא”,type:“10”,loc:“בריכה”,script:“שחקן מקליט הודעה בטלפון כשהוא בתוך המים של הבריכה, עם משקפי שמש.”,cast:“שחקן”,lc:””,lp:””},
+{id:20,day:“ראשון”,t:“14:15-15:00”,hotel:“מלכת שבא”,type:“10”,loc:“בריכה”,script:“שחקן משתזף ברוגע על שפת הבריכה.”,cast:“שחקן”,lc:””,lp:””},
+{id:21,day:“ראשון”,t:“14:15-15:00”,hotel:“מלכת שבא”,type:“10”,loc:“בריכה”,script:“שחקן שוחה להנאתו במים”,cast:“שחקן”,lc:””,lp:””},
+{id:22,day:“ראשון”,t:“15:00-16:00”,hotel:“מלכת שבא”,type:””,loc:“בריכה”,script:“ביוטי כללי של בריכה ושחקנים”,cast:“שחקן ושחקנית”,lc:””,lp:””},
+{id:23,day:“ראשון”,t:“15:00-16:00”,hotel:“מלכת שבא”,type:“8”,loc:“בריכה”,script:“השתקפות הבריכה והשמיים בתוך משקפי שמש על השולחן.”,cast:”-”,lc:””,lp:””},
+{id:24,day:“ראשון”,t:“15:00-16:00”,hotel:“מלכת שבא”,type:“3”,loc:“ספא”,script:“מגבות מגולגול, שחקנית בספא”,cast:“שחקנית”,lc:“כניסה לספא”,lp:””},
+{id:25,day:“ראשון”,t:“15:00-16:00”,hotel:“מלכת שבא”,type:“2”,loc:“מועדון ילדים”,script:“מועדון הילדים”,cast:”-”,lc:””,lp:””},
+{id:26,day:“ראשון”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“12”,loc:“בריכה”,script:“שחקנית יושבת חצי גוף במים”,cast:“שחקנית”,lc:””,lp:””},
+{id:27,day:“ראשון”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“2”,loc:“בריכה”,script:“קוקטייל צבעוני על שפת הבריכה- עם השחקנית”,cast:“שחקנית ושחקן”,lc:“קוקטייל”,lp:””},
+{id:28,day:“ראשון”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“10”,loc:“בריכה”,script:“צילום רחפן של בריכת מלכת שבא עם השחקנית”,cast:“שחקנית”,lc:””,lp:“רחפן”},
+{id:29,day:“ראשון”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“12”,loc:“בריכה”,script:“צילום רחפן- שחקנים”,cast:“שחקן, שחקנית, מרטה, אורי ואליה”,lc:””,lp:“רחפן”},
+{id:30,day:“ראשון”,t:“16:00-17:00”,hotel:””,type:””,loc:“בריכה”,script:“קוביית קרח זזה בקולה ליד הבריכה”,cast:”-”,lc:“זירו”,lp:””},
+{id:31,day:“ראשון”,t:“17:00-17:20”,hotel:“מלכת שבא”,type:“8”,loc:“בריכה”,script:“בריכת קטנים- ביוטי”,cast:”-”,lc:””,lp:””},
+{id:32,day:“ראשון”,t:“17:00-17:20”,hotel:“מלכת שבא”,type:“8”,loc:“בריכה”,script:“טיפות מים על כוס קוקטייל קרה ליד הבריכה”,cast:”-”,lc:“קוקטייל”,lp:””},
+{id:33,day:“ראשון”,t:“17:45-19:15”,hotel:””,type:“7”,loc:“טיילת”,script:“עושה קעקוע חינה”,cast:””,lc:””,lp:””},
+{id:34,day:“ראשון”,t:“17:45-19:15”,hotel:””,type:””,loc:“טיילת”,script:“שחקן יושב עם כל מיני שקיות מיואש”,cast:””,lc:””,lp:“שקיות”},
+{id:35,day:“ראשון”,t:“17:45-19:15”,hotel:””,type:“2”,loc:“חוף”,script:“פתיח של 2- בעיניי לא צריך”,cast:””,lc:””,lp:””},
+{id:36,day:“ראשון”,t:“17:45-19:15”,hotel:””,type:“3”,loc:“חוף”,script:“ביוטי שחקנים בים ובטיילת- הולכים על החוף, מכניסים רגליים”,cast:””,lc:””,lp:””},
+{id:37,day:“ראשון”,t:“17:45-19:15”,hotel:””,type:“5”,loc:“חוף”,script:“ישנים על מגבת בחוף”,cast:””,lc:””,lp:””},
+{id:38,day:“ראשון”,t:“17:45-19:15”,hotel:””,type:“1”,loc:“חוף”,script:“שחקן יושב על החוף - ובזמן שאתם מחפשים איך לסגור את החודש? אני מחפש באיזה חוף לשבת אחרי המשמרת.”,cast:””,lc:””,lp:””},
+{id:39,day:“ראשון”,t:“19:30+”,hotel:“מלכת שבא”,type:“10”,loc:“חדר אוכל”,script:“מעמיס הר של שניצלים”,cast:””,lc:””,lp:””},
+{id:40,day:“ראשון”,t:“19:30+”,hotel:“מלכת שבא”,type:“4”,loc:“חדר אוכל”,script:“מזלג חותך עוגה”,cast:””,lc:””,lp:””},
+{id:41,day:“ראשון”,t:“19:30+”,hotel:””,type:””,loc:“חדר”,script:“אם יש חדר יפה אז לצילומי ביוטי - פותחים יין או משהו בחדר”,cast:””,lc:“חדר במלכת שבא”,lp:””},
+{id:42,day:“שני”,t:“8:30-9:00”,hotel:“וילג”,type:“1”,loc:“חדר אוכל”,script:“ארוחת בוקר- ביוטי שוטים קצרים. עם ובלי שחקנית”,cast:””,lc:””,lp:””},
+{id:43,day:“שני”,t:“9:00-11:00”,hotel:“אריאה”,type:“7”,loc:“חדר אוכל”,script:“שחקנית בחדר האוכל באמצע ביס - תופסת את הכובע וזורקת שוב.”,cast:””,lc:“כובע קש”,lp:””},
+{id:44,day:“שני”,t:“9:00-11:00”,hotel:“אריאה”,type:“5”,loc:“חדר אוכל”,script:“שחקנים עייפים אחרי ארוחה- צלחות אחרי האוכל”,cast:””,lc:””,lp:””},
+{id:45,day:“שני”,t:“9:00-11:00”,hotel:””,type:“7”,loc:“מרפסת”,script:“אתם חייבים חופשה- זורקת כובע”,cast:””,lc:””,lp:””},
+{id:46,day:“שני”,t:“9:00-11:00”,hotel:””,type:“7”,loc:“בריכה”,script:“שותה קוקטייל- כובע”,cast:””,lc:””,lp:””},
+{id:47,day:“שני”,t:“9:00-11:00”,hotel:””,type:“9”,loc:“בריכה”,script:“צילום יפה ומרשים של הבריכה מוארת בשמש”,cast:””,lc:””,lp:””},
+{id:48,day:“שני”,t:“9:00-11:00”,hotel:””,type:””,loc:“בריכה”,script:“מרטוש והרחפן”,cast:“מרטה”,lc:””,lp:“רחפן”},
+{id:49,day:“שני”,t:“9:00-11:00”,hotel:””,type:“9”,loc:“הגשר והים”,script:“ביוטי”,cast:””,lc:””,lp:””},
+{id:50,day:“שני”,t:“9:00-11:00”,hotel:””,type:“7”,loc:“ספא”,script:“שוכבת על הגב והכובע נופל עליה”,cast:””,lc:””,lp:””},
+{id:51,day:“שני”,t:“9:00-11:00”,hotel:“אריאה”,type:“9”,loc:“ספא”,script:“ספא מגבות מגולגול, שחקנית”,cast:””,lc:””,lp:””},
+{id:52,day:“שני”,t:“9:00-11:00”,hotel:””,type:“9”,loc:””,script:“צילומי ביוטי”,cast:””,lc:””,lp:””},
+{id:53,day:“שני”,t:“9:00-11:00”,hotel:“אריאה”,type:“11”,loc:“לובי”,script:“איך אני חושבת שפקידת הקבלה רואה אותי: בחורה עם טרולי חוצה את הלובי. איך היא באמת רואה אותי: בחורה שנעצרת כל שנייה וצועקת לאחורה.”,cast:“שחקנית”,lc:””,lp:“טרולי”},
+{id:54,day:“שני”,t:“11:00-13:00”,hotel:“וילג”,type:“1”,loc:“חוץ”,script:“הולכים בין החדרים”,cast:””,lc:””,lp:””},
+{id:55,day:“שני”,t:“11:00-13:00”,hotel:“וילג”,type:“8”,loc:“חדר אוכל”,script:“צילום איטי חלב נשפך לקפה שחור או קצף קפוצינו בחדר אוכל.”,cast:””,lc:””,lp:””},
+{id:56,day:“שני”,t:“11:00-13:00”,hotel:“וילג”,type:“1”,loc:“בריכה”,script:“שחקנית בבריכה- שוטים קצרים”,cast:””,lc:””,lp:””},
+{id:57,day:“שני”,t:“11:00-13:00”,hotel:“וילג”,type:“1”,loc:“בריכה”,script:“רק מים”,cast:””,lc:””,lp:””},
+{id:58,day:“שני”,t:“11:00-13:00”,hotel:“וילג”,type:“5”,loc:“בריכה”,script:“רביצה בבריכה, שוכבת על כסא נוח מתחת לשמשיה, כובע קש על הפנים”,cast:””,lc:””,lp:””},
+{id:59,day:“שני”,t:“13:00”,hotel:“וילג”,type:“5”,loc:“משרד”,script:“אביעד”,cast:””,lc:””,lp:””},
+{id:60,day:“שני”,t:“13:30”,hotel:“מלכת שבא”,type:“1”,loc:“לובי וכביסה”,script:“כל תסריט 1 חוץ מהשוט האחרון”,cast:“שחקן”,lc:“מדים”,lp:””},
+{id:61,day:“שני”,t:“15:30”,hotel:“מלכת שבא”,type:“6”,loc:””,script:“ראיון עם שמעון”,cast:””,lc:””,lp:””},
+{id:62,day:“שני”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“2”,loc:“קבלה, מציל, ברמן ועובד”,script:“כל התסריט”,cast:””,lc:””,lp:””},
+{id:63,day:“שני”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“3”,loc:””,script:“מישהו”,cast:””,lc:””,lp:””},
+{id:64,day:“שני”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“7”,loc:“מדבקות”,script:“להדביק על הדלת כניסה, על ראש של עובד, על גב של מישהו, על בר או כוס יין.”,cast:””,lc:””,lp:””},
+{id:65,day:“שני”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“8”,loc:“שירות חדרים”,script:“3 עובדות”,cast:””,lc:””,lp:””},
+{id:66,day:“שני”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“9”,loc:””,script:“לצלם את הצ’קרית, הקבט, ושהם לוחצים ידיים”,cast:””,lc:“קבט וצ’קרית שיצטלמו”,lp:””},
+{id:67,day:“שני”,t:“16:00-17:00”,hotel:“מלכת שבא”,type:“9”,loc:””,script:“טלפון על השולחן”,cast:””,lc:””,lp:””},
+{id:68,day:“שלישי”,t:“9:30”,hotel:“מאריס”,type:“4”,loc:””,script:“כל תסריט 4 עם דודו”,cast:””,lc:””,lp:””},
+{id:69,day:“שלישי”,t:“9:30”,hotel:“מאריס”,type:“3”,loc:””,script:“צילומי ביוטי”,cast:””,lc:””,lp:””}
+];
+
+var STATUS = {PENDING:“pending”,DONE:“done”,PARTIAL:“partial”,DELAYED:“delayed”,SKIPPED:“skipped”};
+var SM = {
+pending:  {label:”\u05DE\u05DE\u05EA\u05D9\u05DF”,   emoji:”\u23F3”, bg:”#1e293b”,fg:”#94a3b8”,border:”#334155”,pill:”#0f172a”},
+done:     {label:”\u05D1\u05D5\u05E6\u05E2”,          emoji:”\u2705”, bg:”#052e16”,fg:”#4ade80”,border:”#166534”,pill:”#14532d”},
+partial:  {label:”\u05D7\u05DC\u05E7\u05D9\u05EA”,   emoji:”\u{1F536}”, bg:”#1c1400”,fg:”#fbbf24”,border:”#854d0e”,pill:”#78350f”},
+delayed:  {label:”\u05E0\u05D3\u05D7\u05D4”,         emoji:”\u23F0”, bg:”#1e1b4b”,fg:”#a78bfa”,border:”#4c1d95”,pill:”#3730a3”},
+skipped:  {label:”\u05DC\u05D0 \u05D1\u05D5\u05E6\u05E2”,emoji:”\u2715”,bg:”#1a0505”,fg:”#f87171”,border:”#991b1b”,pill:”#7f1d1d”}
+};
+var HA = {”\u05D5\u05D9\u05DC\u05D2”:”#38bdf8”,”\u05DE\u05DC\u05DB\u05EA \u05E9\u05D1\u05D0”:”#f472b6”,”\u05D0\u05E8\u05D9\u05D0\u05D4”:”#34d399”,”\u05DE\u05D0\u05E8\u05D9\u05E1”:”#fb923c”,””:”#64748b”};
+
+var KI = “may_items_v4”;
+var KS = “may_statuses_v4”;
+
+function pm(slot) {
+if (!slot) return 9999;
+var f = slot.split(”-”)[0].trim().split(”+”)[0].trim().split(”:”);
+return (parseInt(f[0],10)||0)*60+(parseInt(f[1],10)||0);
+}
+function addM(slot, d) {
+if (!slot || slot.indexOf(”+”)!==-1) return slot;
+function fmt(t){var hh=Math.floor(t/60)%24,mm=t%60;return hh+”:”+(mm<10?“0”:””)+mm;}
+function pt(s){var p=s.trim().split(”:”);return (parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0);}
+var p=slot.split(”-”);
+return p.length===2?fmt(pt(p[0])+d)+”-”+fmt(pt(p[1])+d):fmt(pt(p[0])+d);
+}
+function gst(stats,id){return (stats[id]&&stats[id].status)||STATUS.PENDING;}
+function accent(hotel){return HA[hotel]||”#64748b”;}
+
+function s(obj){return {style:obj};}
+function cls(nm){return {className:nm};}
+
+// –– ITEM MODAL ––
+function ItemModal(props) {
+var item=props.item, ist=props.ist||{};
+var r0=useState(ist.status||STATUS.PENDING), st=r0[0], setSt=r0[1];
+var r1=useState(ist.completionPct||50), pct=r1[0], setPct=r1[1];
+var r2=useState(ist.reason||””), reason=r2[0], setReason=r2[1];
+var r3=useState(ist.notes||””), notes=r3[0], setNotes=r3[1];
+var r4=useState(false), dOpen=r4[0], setDOpen=r4[1];
+var r5=useState(30), dMins=r5[0], setDMins=r5[1];
+var ac=accent(item.hotel);
+function bd(e){if(e.target===e.currentTarget)props.onClose();}
+
+```
+var htags=[];
+if(item.hotel) htags.push(h("span",{key:"h",style:{fontSize:"10px",color:ac,fontWeight:800,background:ac+"15",padding:"2px 8px",borderRadius:"8px",border:"1px solid "+ac+"30"}},item.hotel));
+if(item.t) htags.push(h("span",{key:"t",style:{fontSize:"10px",color:"#7dd3fc",background:"#0c1a2e",padding:"2px 8px",borderRadius:"8px",border:"1px solid #1e3a5f"}},"\u23F0 "+item.t));
+if(item.loc) htags.push(h("span",{key:"l",style:{fontSize:"10px",color:"#94a3b8",background:"#1e293b",padding:"2px 8px",borderRadius:"8px"}},"\uD83D\uDCCD "+item.loc));
+
+var ha=[
+  h("div",{key:"tg",style:{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"6px"}},htags),
+  h("p",{key:"sc",style:{margin:0,fontSize:"14px",color:"#e2e8f0",lineHeight:1.6,fontWeight:500}},item.script)
+];
+if(item.cast&&item.cast!=="-") ha.push(h("p",{key:"ca",style:{margin:"6px 0 0",fontSize:"12px",color:"#64748b"}},"\uD83D\uDC64 "+item.cast));
+if(item.lc) ha.push(h("p",{key:"lc",style:{margin:"4px 0 0",fontSize:"11px",color:"#4ade80"}},"\uD83C\uDFAF "+item.lc));
+if(item.lp) ha.push(h("p",{key:"lp",style:{margin:"2px 0 0",fontSize:"11px",color:"#fbbf24"}},"\u2699\uFE0F "+item.lp));
+
+var sbts=Object.keys(SM).map(function(val){
+  var m=SM[val],sel=st===val;
+  return h("button",{key:val,onClick:function(){setSt(val);},style:{padding:"10px 8px",border:"1px solid "+(sel?m.border:"#1e2d45"),borderRadius:"8px",background:sel?m.bg:"#0f172a",color:sel?m.fg:"#475569",cursor:"pointer",fontSize:"12px",fontWeight:700,outline:sel?"2px solid "+m.border:"none",outlineOffset:"1px"}},m.emoji+" "+m.label);
+});
+
+var body=[
+  h("div",{key:"ha",style:{marginBottom:"12px"}},ha),
+  h("div",{key:"sp",style:{height:"1px",background:"#1e2d45",margin:"12px 0"}}),
+  h("div",{key:"sl",style:{fontSize:"11px",color:"#475569",fontWeight:700,letterSpacing:"1px",marginBottom:"8px",textTransform:"uppercase"}},"\u05E1\u05D8\u05D0\u05D8\u05D5\u05E1"),
+  h("div",{key:"sg",style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"14px"}},sbts)
+];
+
+if(st===STATUS.PARTIAL){
+  body.push(h("div",{key:"pp",style:{marginBottom:"14px",background:"#1c1400",border:"1px solid #854d0e",borderRadius:"8px",padding:"12px"}},[
+    h("div",{key:"l",style:{fontSize:"12px",color:"#fbbf24",fontWeight:700,marginBottom:"8px"}},"\u05DB\u05DE\u05D4 \u05D1\u05D5\u05E6\u05E2? "+pct+"%"),
+    h("input",{key:"i",type:"range",min:"10",max:"90",step:"10",value:pct,onChange:function(e){setPct(Number(e.target.value));}})
+  ]));
+}
+
+body.push(h("div",{key:"rl",style:{fontSize:"11px",color:"#475569",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",textTransform:"uppercase"}},"\u05E1\u05D9\u05D1\u05D4 / \u05D4\u05E1\u05D1\u05E8"));
+body.push(h("textarea",{key:"rt",value:reason,onChange:function(e){setReason(e.target.value);},placeholder:"\u05DC\u05DE\u05D4? \u05DE\u05D4 \u05E7\u05E8\u05D4? \u05DB\u05DE\u05D4 \u05E6\u05DC\u05DE\u05E0\u05D5?",style:{width:"100%",padding:"10px",background:"#0f1929",border:"1px solid #1e2d45",borderRadius:"8px",color:"#e2e8f0",fontSize:"13px",resize:"vertical",minHeight:"64px",boxSizing:"border-box",outline:"none",marginBottom:"10px",display:"block"}}));
+body.push(h("div",{key:"nl",style:{fontSize:"11px",color:"#475569",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",textTransform:"uppercase"}},"\u05D4\u05E2\u05E8\u05D5\u05EA"));
+body.push(h("textarea",{key:"nt",value:notes,onChange:function(e){setNotes(e.target.value);},placeholder:"\u05D4\u05E2\u05E8\u05D5\u05EA \u05E0\u05D5\u05E1\u05E4\u05D5\u05EA...",style:{width:"100%",padding:"10px",background:"#0f1929",border:"1px solid #1e2d45",borderRadius:"8px",color:"#e2e8f0",fontSize:"13px",resize:"vertical",minHeight:"64px",boxSizing:"border-box",outline:"none",marginBottom:"14px",display:"block"}}));
+
+var dpre=[15,30,45,60,90,120].map(function(m){
+  var sel=dMins===m;
+  return h("button",{key:m,onClick:function(){setDMins(m);},style:{padding:"5px 10px",border:"1px solid "+(sel?"#7c3aed":"#2e1a6b"),borderRadius:"6px",background:sel?"#7c3aed":"transparent",color:sel?"#fff":"#a78bfa",cursor:"pointer",fontSize:"11px"}},m<60?m+"\u05D3":(m/60)+"\u05E9");
+});
+var dsec=[h("button",{key:"tb",onClick:function(){setDOpen(!dOpen);},style:{background:"none",border:"none",color:"#a78bfa",fontSize:"12px",fontWeight:700,cursor:"pointer",padding:0}},"\u23F0 \u05D3\u05D7\u05D4 \u05E4\u05E8\u05D9\u05D8 \u05D6\u05D4 \u05D1\u05E0\u05E4\u05E8\u05D3 "+(dOpen?"\u25B2":"\u25BC"))];
+if(dOpen){
+  dsec.push(h("div",{key:"dp",style:{marginTop:"10px",background:"#1e1b4b",border:"1px solid #4c1d95",borderRadius:"8px",padding:"12px"}},[
+    h("div",{key:"r",style:{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"10px"}},dpre),
+    h("button",{key:"go",onClick:function(){props.onDelay(dMins);},style:{width:"100%",padding:"9px",background:"#7c3aed",border:"none",borderRadius:"8px",color:"white",fontWeight:700,cursor:"pointer",fontSize:"13px"}},"\u05D3\u05D7\u05D4 \u05D1-"+(dMins<60?(dMins+" \u05D3\u05E7\u05D5\u05EA"):((dMins/60)+" \u05E9\u05E2\u05D4")))
+  ]));
+}
+body.push(h("div",{key:"ds",style:{marginBottom:"16px"}},dsec));
+body.push(h("div",{key:"ab",style:{display:"flex",gap:"8px"}},[
+  h("button",{key:"c",onClick:props.onClose,style:{flex:1,padding:"13px",background:"#0f172a",border:"1px solid #1e2d45",borderRadius:"10px",color:"#64748b",cursor:"pointer",fontSize:"14px"}},"\u05D1\u05D9\u05D8\u05D5\u05DC"),
+  h("button",{key:"s",onClick:function(){var p={status:st,reason:reason,notes:notes};if(st===STATUS.PARTIAL)p.completionPct=pct;props.onSave(p);},style:{flex:2,padding:"13px",background:ac,border:"none",borderRadius:"10px",color:"#000",fontWeight:800,cursor:"pointer",fontSize:"14px"}},"\u05E9\u05DE\u05D5\u05E8 \u2713")
+]));
+
+return h("div",{onClick:bd,style:{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:100,display:"flex",alignItems:"flex-end",justifyContent:"center"}},
+  h("div",{dir:"rtl",style:{background:"#0f172a",borderRadius:"20px 20px 0 0",border:"1px solid #1e2d45",borderBottom:"none",padding:"0 0 24px",width:"100%",maxWidth:"600px",maxHeight:"88vh",overflowY:"auto"}},[
+    h("div",{key:"dh",style:{padding:"12px 0 0",display:"flex",justifyContent:"center"}},h("div",{style:{width:"36px",height:"4px",background:"#1e2d45",borderRadius:"2px"}})),
+    h("div",{key:"ab",style:{height:"3px",background:"linear-gradient(90deg,"+ac+",transparent)",margin:"12px 0 0"}}),
+    h("div",{key:"bd",style:{padding:"16px 18px 0"}},body)
+  ])
+);
+```
+
+}
+
+// –– GLOBAL DELAY MODAL ––
+function DelayModal(props) {
+var r=useState(30),mins=r[0],setMins=r[1];
+function bd(e){if(e.target===e.currentTarget)props.onClose();}
+var btns=[15,30,45,60,90,120].map(function(m){
+var sel=mins===m;
+return h(“button”,{key:m,onClick:function(){setMins(m);},style:{flex:“1 0 calc(33% - 4px)”,padding:“10px 4px”,border:“1px solid “+(sel?”#7c3aed”:”#1e1b4b”),borderRadius:“8px”,background:sel?”#7c3aed”:”#1e1b4b”,color:sel?“white”:”#a78bfa”,cursor:“pointer”,fontSize:“13px”,fontWeight:700}},m<60?(m+” \u05D3\u05E7’””):((m/60)+” \u05E9\u05E2\u05D4”));
+});
+return h(“div”,{onClick:bd,style:{position:“fixed”,inset:0,background:“rgba(0,0,0,0.8)”,zIndex:200,display:“flex”,alignItems:“center”,justifyContent:“center”,padding:“16px”}},
+h(“div”,{dir:“rtl”,style:{background:”#0f172a”,border:“1px solid #4c1d95”,borderRadius:“16px”,padding:“24px”,width:“100%”,maxWidth:“340px”}},[
+h(“h2”,{key:“t”,style:{margin:“0 0 6px”,fontSize:“18px”,color:”#c4b5fd”}},”\u23F0 \u05D3\u05D7\u05D9\u05D9\u05EA \u05DC\u05D5"\u05D6 \u05DB\u05D5\u05DC\u05DC”),
+h(“p”,{key:“d”,style:{margin:“0 0 18px”,fontSize:“13px”,color:”#64748b”,lineHeight:1.5}},”\u05DB\u05DC \u05D4\u05E4\u05E8\u05D9\u05D8\u05D9\u05DD \u05E9\u05D8\u05E8\u05DD \u05D1\u05D5\u05E6\u05E2\u05D5 \u05D9\u05D3\u05D7\u05D5 \u05D1\u05D4\u05EA\u05D0\u05DE\u05D4.”),
+h(“div”,{key:“g”,style:{display:“flex”,gap:“6px”,flexWrap:“wrap”,marginBottom:“14px”}},btns),
+h(“div”,{key:“a”,style:{display:“flex”,gap:“8px”}},[
+h(“button”,{key:“c”,onClick:props.onClose,style:{flex:1,padding:“12px”,background:”#0f172a”,border:“1px solid #1e2d45”,borderRadius:“10px”,color:”#64748b”,cursor:“pointer”}},”\u05D1\u05D9\u05D8\u05D5\u05DC”),
+h(“button”,{key:“ok”,onClick:function(){props.onConfirm(mins);},style:{flex:2,padding:“12px”,background:”#7c3aed”,border:“none”,borderRadius:“10px”,color:“white”,fontWeight:800,cursor:“pointer”,fontSize:“14px”}},”\u05D3\u05D7\u05D4 \u05D1-”+(mins<60?(mins+”\u05D3”):((mins/60)+”\u05E9”)))
+])
+])
+);
+}
+
+// –– APP ––
+function App() {
+var ri=useState(function(){try{var v=localStorage.getItem(KI);return v?JSON.parse(v):ITEMS;}catch(e){return ITEMS;}}),items=ri[0],setItems=ri[1];
+var rs=useState(function(){try{var v=localStorage.getItem(KS);return v?JSON.parse(v):{};}catch(e){return {};}}),stats=rs[0],setStats=rs[1];
+var rd=useState(”\u05E8\u05D0\u05E9\u05D5\u05DF”),activeDay=rd[0],setActiveDay=rd[1];
+var rsel=useState(null),sel=rsel[0],setSel=rsel[1];
+var rgd=useState(false),showGD=rgd[0],setShowGD=rgd[1];
+var rfl=useState(“all”),flt=rfl[0],setFlt=rfl[1];
+
+```
+useEffect(function(){try{localStorage.setItem(KI,JSON.stringify(items));}catch(e){};},[items]);
+useEffect(function(){try{localStorage.setItem(KS,JSON.stringify(stats));}catch(e){};},[stats]);
+
+function upd(id,patch){setStats(function(p){var n=Object.assign({},p);n[id]=Object.assign({},p[id]||{},patch);return n;});}
+function dalAll(m){setItems(function(p){return p.map(function(item){var st=gst(stats,item.id);if(st===STATUS.PENDING||st===STATUS.PARTIAL)return Object.assign({},item,{t:addM(item.t,m)});return item;});});setShowGD(false);}
+function dalOne(id,m){setItems(function(p){return p.map(function(item){return item.id===id?Object.assign({},item,{t:addM(item.t,m)}):item;});});upd(id,{status:STATUS.DELAYED});}
+
+var dayItems=items.filter(function(i){return i.day===activeDay;});
+var smap={};dayItems.forEach(function(i){smap[i.t]=true;});
+var slots=Object.keys(smap).sort(function(a,b){return pm(a)-pm(b);});
+
+var total=items.length;
+var done=items.filter(function(i){return gst(stats,i.id)===STATUS.DONE;}).length;
+var partial=items.filter(function(i){return gst(stats,i.id)===STATUS.PARTIAL;}).length;
+var pct=Math.round(((done+partial*0.5)/total)*100);
+
+function filtered(arr){if(flt==="all")return arr;return arr.filter(function(i){return gst(stats,i.id)===flt;});}
+
+var days=["\u05E8\u05D0\u05E9\u05D5\u05DF","\u05E9\u05E0\u05D9","\u05E9\u05DC\u05D9\u05E9\u05D9"];
+var dayTabs=days.map(function(day){
+  var dc=items.filter(function(i){return i.day===day;}).length;
+  var dd=items.filter(function(i){return i.day===day&&gst(stats,i.id)===STATUS.DONE;}).length;
+  var act=activeDay===day;
+  return h("button",{key:day,onClick:function(){setActiveDay(day);},style:{flex:1,padding:"10px 8px",border:"none",background:"none",cursor:"pointer",borderBottom:act?"2px solid #7c3aed":"2px solid transparent",color:act?"#c4b5fd":"#475569",fontWeight:act?800:500,fontSize:"13px"}},[
+    "\u05D9\u05D5\u05DD "+day,
+    h("div",{key:"c",style:{fontSize:"9px",color:act?"#7c3aed":"#334155",marginTop:"1px"}},dd+"/"+dc)
+  ]);
+});
+
+var fltDefs=[
+  ["all","\u05D4\u05DB\u05DC","#475569"],
+  ["pending",SM.pending.label,SM.pending.border],
+  ["done",SM.done.label,SM.done.border],
+  ["partial",SM.partial.label,SM.partial.border],
+  ["delayed",SM.delayed.label,SM.delayed.border],
+  ["skipped",SM.skipped.label,SM.skipped.border]
+];
+var pills=fltDefs.map(function(d){
+  var sel=flt===d[0];
+  return h("button",{key:d[0],onClick:function(){setFlt(d[0]);},style:{padding:"3px 10px",borderRadius:"20px",border:"1px solid "+(sel?d[2]:"#1e2d45"),background:sel?d[2]:"transparent",color:sel?"#fff":"#64748b",fontSize:"11px",fontWeight:600,cursor:"pointer",whiteSpace:"nowrap"}},d[1]);
+});
+
+var header=h("div",{style:{background:"linear-gradient(180deg,#0f1929 0%,#060d1a 100%)",borderBottom:"1px solid #1e2d45",position:"sticky",top:0,zIndex:50}},[
+  h("div",{key:"p",style:{padding:"14px 16px 10px"}},[
+    h("div",{key:"r",style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}},[
+      h("div",{key:"t"},[
+        h("div",{key:"s",style:{fontSize:"11px",letterSpacing:"3px",color:"#475569",textTransform:"uppercase",marginBottom:"2px"}},"Production Schedule"),
+        h("h1",{key:"h",style:{margin:0,fontSize:"20px",fontWeight:800,color:"#f1f5f9",letterSpacing:"-0.5px"}},"\u05D1\u05E8\u05D9\u05D9\u05E7\u05D3\u05D0\u05D5\u05DF \u05DE\u05D0\u05D9 \uD83C\uDFAC")
+      ]),
+      h("button",{key:"b",onClick:function(){setShowGD(true);},style:{background:"#1e1b4b",border:"1px solid #4c1d95",color:"#a78bfa",borderRadius:"8px",padding:"8px 14px",fontSize:"12px",fontWeight:700,cursor:"pointer"}},"\u23F0 \u05D3\u05D7\u05D9\u05D9\u05EA \u05DC\u05D5\"\u05D6")
+    ]),
+    h("div",{key:"pb",style:{marginTop:"12px",display:"flex",gap:"10px",alignItems:"center"}},[
+      h("div",{key:"t",style:{flex:1,background:"#0f1929",borderRadius:"3px",height:"5px",overflow:"hidden",border:"1px solid #1e2d45"}},
+        h("div",{style:{width:pct+"%",height:"100%",background:"linear-gradient(90deg,#22c55e,#4ade80)",transition:"width 0.5s"}})
+      ),
+      h("span",{key:"n",style:{fontSize:"11px",color:"#64748b",whiteSpace:"nowrap",fontWeight:700}},done+"/"+total+" \u00B7 "+pct+"%")
+    ])
+  ]),
+  h("div",{key:"dt",style:{display:"flex",borderTop:"1px solid #1e2d45",overflowX:"auto"}},dayTabs),
+  h("div",{key:"fp",style:{padding:"8px 12px",display:"flex",gap:"6px",overflowX:"auto",borderTop:"1px solid #1e2d45"}},pills)
+]);
+
+var body=slots.map(function(slot){
+  var all=dayItems.filter(function(i){return i.t===slot;});
+  var filt=filtered(all);
+  if(filt.length===0&&flt!=="all")return null;
+  var slotHeader=h("div",{style:{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px"}},[
+    h("div",{key:"tl",style:{background:"#0f172a",border:"1px solid #1e2d45",borderRadius:"6px",padding:"4px 10px",fontSize:"11px",fontWeight:800,color:"#7dd3fc",letterSpacing:"1px",whiteSpace:"nowrap"}},slot||"---"),
+    h("div",{key:"ln",style:{flex:1,height:"1px",background:"linear-gradient(90deg,#1e2d45,transparent)"}}),
+    h("span",{key:"n",style:{fontSize:"10px",color:"#334155"}},""+all.length)
+  ]);
+  var cards=filt.map(function(item){
+    var ist=stats[item.id]||{};
+    var st=ist.status||STATUS.PENDING;
+    var m=SM[st];
+    var ac=accent(item.hotel);
+    var isDone=st===STATUS.DONE;
+    var tags=[];
+    if(item.hotel) tags.push(h("span",{key:"h",style:{fontSize:"10px",background:"rgba(255,255,255,0.06)",border:"1px solid "+ac+"40",color:ac,padding:"1px 7px",borderRadius:"10px",fontWeight:700}},item.hotel));
+    if(item.loc) tags.push(h("span",{key:"l",style:{fontSize:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid #1e2d45",color:"#64748b",padding:"1px 7px",borderRadius:"10px"}},"\uD83D\uDCCD "+item.loc));
+    if(item.type) tags.push(h("span",{key:"t",style:{fontSize:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid #1e2d45",color:"#475569",padding:"1px 7px",borderRadius:"10px"}},"#"+item.type));
+    if(item.lp) tags.push(h("span",{key:"p",style:{fontSize:"10px",background:"#1a0f00",border:"1px solid #92400e",color:"#fbbf24",padding:"1px 7px",borderRadius:"10px"}},"\u2699\uFE0F "+item.lp));
+    if(item.lc) tags.push(h("span",{key:"c",style:{fontSize:"10px",background:"#001a0f",border:"1px solid #166534",color:"#4ade80",padding:"1px 7px",borderRadius:"10px"}},"\uD83C\uDFAF "+item.lc));
+    var left=[
+      h("div",{key:"tg",style:{display:"flex",flexWrap:"wrap",gap:"4px",marginBottom:"6px"}},tags),
+      h("p",{key:"sc",style:{margin:"0 0 4px",fontSize:"13px",color:isDone?"#475569":"#cbd5e1",lineHeight:1.5,textDecoration:isDone?"line-through":"none"}},item.script)
+    ];
+    if(item.cast&&item.cast!=="-") left.push(h("p",{key:"ca",style:{margin:0,fontSize:"11px",color:"#475569"}},"\uD83D\uDC64 "+item.cast));
+    if(ist.notes) left.push(h("p",{key:"nt",style:{margin:"4px 0 0",fontSize:"11px",color:"#a78bfa",fontStyle:"italic"}},"\uD83D\uDCDD "+ist.notes));
+    if(ist.reason) left.push(h("p",{key:"rs",style:{margin:"2px 0 0",fontSize:"11px",color:"#fbbf24"}},"\uD83D\uDCAC "+ist.reason));
+    var right=[h("span",{key:"b",style:{fontSize:"11px",fontWeight:700,padding:"3px 8px",borderRadius:"6px",background:m.pill,color:m.fg,whiteSpace:"nowrap"}},m.emoji+" "+m.label)];
+    if(st===STATUS.PARTIAL&&ist.completionPct) right.push(h("span",{key:"p",style:{fontSize:"10px",color:"#fbbf24"}},ist.completionPct+"%"));
+    return h("div",{key:item.id,onClick:function(){setSel(item);},style:{background:m.bg,border:"1px solid "+m.border,borderRight:"3px solid "+ac,borderRadius:"10px",padding:"11px 12px",marginBottom:"7px",cursor:"pointer",opacity:isDone?0.6:1}},
+      h("div",{style:{display:"flex",justifyContent:"space-between",gap:"8px"}},[
+        h("div",{key:"l",style:{flex:1,minWidth:0}},left),
+        h("div",{key:"r",style:{flexShrink:0,display:"flex",flexDirection:"column",alignItems:"flex-end",gap:"4px"}},right)
+      ])
+    );
   });
+  return h("div",{key:slot,style:{marginBottom:"20px"}},[slotHeader,h("div",{key:"cards"},cards)]);
+}).filter(function(x){return x!==null;});
+
+var children=[header,h("div",{key:"body",style:{padding:"12px 12px 80px",maxWidth:"720px",margin:"0 auto"}},body)];
+if(sel) children.push(h(ItemModal,{key:"im",item:sel,ist:stats[sel.id]||{},onSave:function(p){upd(sel.id,p);setSel(null);},onDelay:function(m){dalOne(sel.id,m);setSel(null);},onClose:function(){setSel(null);}}));
+if(showGD) children.push(h(DelayModal,{key:"gd",onConfirm:dalAll,onClose:function(){setShowGD(false);}}));
+return h("div",{dir:"rtl",style:{background:"#060d1a",minHeight:"100vh"}},children);
+```
+
+}
+
+ReactDOM.createRoot(document.getElementById(“root”)).render(h(App));
+})();
 </script>
-<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
-<script src="./app.js"></script>
+
 </body>
 </html>
